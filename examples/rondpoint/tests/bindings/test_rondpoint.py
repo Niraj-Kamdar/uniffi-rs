@@ -130,9 +130,7 @@ affirmEnchaine([0x0000000000000000, 0x1234567890ABCDEF, 0xFFFFFFFFFFFFFFFF], st.
 def rustyFloatToStr(v):
     """Stringify a float in the same way that rust seems to."""
     # Rust doesn't include the decimal part of whole enumber floats when stringifying.
-    if int(v) == v:
-        return str(int(v))
-    return str(v)
+    return str(int(v)) if int(v) == v else str(v)
 
 affirmEnchaine([0.0, 0.5, 0.25, 1.0], st.to_string_float, rustyFloatToStr)
 assert st.to_string_float(F32_ONE_THIRD) == "0.33333334" # annoyingly different string repr

@@ -18,11 +18,7 @@ class RustBuffer(ctypes.Structure):
         return rust_call(_UniFFILib.{{ ci.ffi_rustbuffer_free().name() }}, self)
 
     def __str__(self):
-        return "RustBuffer(capacity={}, len={}, data={})".format(
-            self.capacity,
-            self.len,
-            self.data[0:self.len]
-        )
+        return f"RustBuffer(capacity={self.capacity}, len={self.len}, data={self.data[:self.len]})"
 
     @contextlib.contextmanager
     def allocWithBuilder():
@@ -72,7 +68,7 @@ class ForeignBytes(ctypes.Structure):
     ]
 
     def __str__(self):
-        return "ForeignBytes(len={}, data={})".format(self.len, self.data[0:self.len])
+        return f"ForeignBytes(len={self.len}, data={self.data[:self.len]})"
 
 
 class RustBufferStream(object):
@@ -131,8 +127,7 @@ class RustBufferStream(object):
         return self._unpack_from(8, ">Q")
 
     def readFloat(self):
-        v = self._unpack_from(4, ">f")
-        return v
+        return self._unpack_from(4, ">f")
 
     def readDouble(self):
         return self._unpack_from(8, ">d")

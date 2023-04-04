@@ -19,15 +19,15 @@ class TestCallbackObj:
         data = TestData("StringOne", "StringTwo")
         if test_case == TestCase.FUNCTION:
             start = time.perf_counter_ns()
-            for i in range(count):
+            for _ in range(count):
                 test_function(10, 20, data)
         elif test_case == TestCase.VOID_RETURN:
             start = time.perf_counter_ns()
-            for i in range(count):
+            for _ in range(count):
                 test_void_return(10, 20, data)
         elif test_case == TestCase.NO_ARGS_VOID_RETURN:
             start = time.perf_counter_ns()
-            for i in range(count):
+            for _ in range(count):
                 test_no_args_void_return()
         end = time.perf_counter_ns()
         return end - start

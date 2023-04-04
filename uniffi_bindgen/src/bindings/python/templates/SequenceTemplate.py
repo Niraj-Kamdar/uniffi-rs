@@ -14,6 +14,4 @@ class {{ ffi_converter_name}}(FfiConverterRustBuffer):
         if count < 0:
             raise InternalError("Unexpected negative sequence length")
 
-        return [
-            {{ inner_ffi_converter }}.read(buf) for i in range(count)
-        ]
+        return [{{ inner_ffi_converter }}.read(buf) for _ in range(count)]

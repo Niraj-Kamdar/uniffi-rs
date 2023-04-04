@@ -44,11 +44,10 @@ def rust_call_with_error(error_ffi_converter, fn, *args):
     if call_status.code == RustCallStatus.CALL_SUCCESS:
         return result
     elif call_status.code == RustCallStatus.CALL_ERROR:
-        if error_ffi_converter is None:
-            call_status.error_buf.free()
-            raise InternalError("rust_call_with_error: CALL_ERROR, but error_ffi_converter is None")
-        else:
+        if error_ffi_converter is not None:
             raise error_ffi_converter.lift(call_status.error_buf)
+        call_status.error_buf.free()
+        raise InternalError("rust_call_with_error: CALL_ERROR, but error_ffi_converter is None")
     elif call_status.code == RustCallStatus.CALL_PANIC:
         # When the rust code sees a panic, it tries to construct a RustBuffer
         # with the message.  But if that code panics, then it just sends back
@@ -59,8 +58,7 @@ def rust_call_with_error(error_ffi_converter, fn, *args):
             msg = "Unknown rust panic"
         raise InternalError(msg)
     else:
-        raise InternalError("Invalid RustCallStatus code: {}".format(
-            call_status.code))
+        raise InternalError(f"Invalid RustCallStatus code: {call_status.code}")
 
 # A function pointer for a callback as defined by UniFFI.
 # Rust definition `fn(handle: u64, method: u32, args: RustBuffer, buf_ptr: *mut RustBuffer) -> int`

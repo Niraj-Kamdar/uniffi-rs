@@ -21,10 +21,7 @@ class PythonGetters(ForeignGetters):
             raise SimpleError.BadArgument()
         elif v == "unexpected-error":
             raise ValueError("unexpected value")
-        if arg2:
-            return "1234567890123"
-        else:
-            return v
+        return "1234567890123" if arg2 else v
 
     def get_option(self, v, arg2):
         if v == "bad-argument":
@@ -32,48 +29,42 @@ class PythonGetters(ForeignGetters):
         elif v == "unexpected-error":
             raise ValueError("unexpected value")
         if arg2:
-            if v:
-                return v.upper()
-            else:
-                return None
+            return v.upper() if v else None
         else:
             return v
 
     def get_list(self, v, arg2):
-        if arg2:
-            return v
-        else:
-            return []
+        return v if arg2 else []
 
 class ForeignGettersTest(unittest.TestCase):
     def test_get_bool(self):
         callback = PythonGetters()
+        flag = True
         for v in [True, False]:
-            flag = True
             expected = callback.get_bool(v, flag)
             observed = rust_getters.get_bool(callback, v, flag)
             self.assertEqual(expected, observed, f"roundtripping through callback: {expected} != {observed}")
 
     def test_get_list(self):
         callback = PythonGetters()
+        flag = True
         for v in [[1, 2], [0, 1]]:
-            flag = True
             expected = callback.get_list(v, flag)
             observed = rust_getters.get_list(callback, v, flag)
             self.assertEqual(expected, observed, f"roundtripping through callback: {expected} != {observed}")
 
     def test_get_string(self):
         callback = PythonGetters()
+        flag = True
         for v in ["Hello", "world"]:
-            flag = True
             expected = callback.get_string(v, flag)
             observed = rust_getters.get_string(callback, v, flag)
             self.assertEqual(expected, observed, f"roundtripping through callback: {expected} != {observed}")
 
     def test_get_optional(self):
         callback = PythonGetters()
+        flag = False
         for v in ["Some", None]:
-            flag = False
             expected = callback.get_option(v, flag)
             observed = rust_getters.get_option(callback, v, flag)
             self.assertEqual(expected, observed, f"roundtripping through callback: {expected} != {observed}")

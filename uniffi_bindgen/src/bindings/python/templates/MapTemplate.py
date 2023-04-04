@@ -20,7 +20,7 @@ class {{ ffi_converter_name }}(FfiConverterRustBuffer):
         # so we we're reading the value before the key.
         # This loop makes the order explicit: first reading the key, then the value.
         d = {}
-        for i in range(count):
+        for _ in range(count):
             key = {{ key_ffi_converter }}.read(buf)
             val = {{ value_ffi_converter }}.read(buf)
             d[key] = val

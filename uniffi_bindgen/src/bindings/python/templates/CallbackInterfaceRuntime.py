@@ -19,12 +19,11 @@ class ConcurrentHandleMap:
         with self._lock:
             if obj in self._right_map:
                 return self._right_map[obj]
-            else:
-                handle = self._current_handle
-                self._current_handle += self._stride
-                self._left_map[handle] = obj
-                self._right_map[obj] = handle
-                return handle
+            handle = self._current_handle
+            self._current_handle += self._stride
+            self._left_map[handle] = obj
+            self._right_map[obj] = handle
+            return handle
 
     def get(self, handle):
         with self._lock:
@@ -56,11 +55,10 @@ class FfiConverterCallbackInterface:
 
     @classmethod
     def lift(cls, handle):
-        obj = cls._handle_map.get(handle)
-        if not obj:
+        if obj := cls._handle_map.get(handle):
+            return obj
+        else:
             raise InternalError("The object in the handle map has been dropped already")
-
-        return obj
 
     @classmethod
     def read(cls, buf):
@@ -69,8 +67,7 @@ class FfiConverterCallbackInterface:
 
     @classmethod
     def lower(cls, cb):
-        handle = cls._handle_map.insert(cb)
-        return handle
+        return cls._handle_map.insert(cb)
 
     @classmethod
     def write(cls, cb, buf):
